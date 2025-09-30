@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Work Check-In</title>
+</head>
+<body>
+  <h2>Check In</h2>
+  <button onclick="checkIn()">Check In Now</button>
+
+  <script>
+    async function checkIn() {
+      let name = "David Hicks"; // your name (or make a form input if needed)
+      let device = navigator.userAgent;
+      
+      // Get IP
+      let ipData = await fetch("https://api.ipify.org?format=json");
+      let ip = (await ipData.json()).ip;
+
+      // Get location
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+
+        // Call Google Script
+        let url = "URLforthis" + 
+          "?name=" + encodeURIComponent(name) +
+          "&device=" + encodeURIComponent(device) +
+          "&ip=" + encodeURIComponent(ip) +
+          "&lat=" + lat +
+          "&lon=" + lon;
+
+        let res = await fetch(url);
+        alert(await res.text());
+      });
+    }
+  </script>
+</body>
+</html>
