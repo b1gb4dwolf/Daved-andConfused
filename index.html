@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Work Check-In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    button { font-size: 20px; padding: 15px 30px; border-radius: 10px; border: none; background: #2c3e50; color: white; cursor: pointer; }
+    button:hover { background: #34495e; }
+    .status { margin-top: 20px; font-size: 16px; color: green; }
+  </style>
+</head>
+<body>
+  <h2>Work Check-In</h2>
+  <button onclick="checkIn()">✅ Check In Now</button>
+  <p class="status" id="status"></p>
+
+  <script>
+    async function checkIn() {
+      let status = document.getElementById("status");
+      status.textContent = "Checking in...";
+
+      let name = "David Hicks"; // your name
+      let device = navigator.userAgent;
+
+      try {
+        // Get IP
+        let ipData = await fetch("https://api.ipify.org?format=json");
+        let ip = (await ipData.json()).ip;
+
+        // Get location
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          let lat = pos.coords.latitude;
+          let lon = pos.coords.longitude;
+
+          // Google Apps Script URL
+          let url = "YOUR_SCRIPT_URL" + 
+            "?name=" + encodeURIComponent(name) +
+            "&device=" + encodeURIComponent(device) +
+            "&ip=" + encodeURIComponent(ip) +
+            "&lat=" + lat +
+            "&lon=" + lon;
+
+          let res = await fetch(url);
+          status.textContent = await res.text();
+        }, (err) => {
+          status.textContent = "❌ Location access denied.";
+        });
+      } catch (e) {
+        status.textContent = "❌ Error: " + e;
+      }
+    }
+  </script>
+</body>
+</html>
